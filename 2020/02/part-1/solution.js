@@ -1,5 +1,5 @@
 const rl = require('readline').createInterface({
-    input: require('fs').createReadStream('test.txt'),
+    input: require('fs').createReadStream('input.txt'),
     crlfDelay: Infinity
 });
 
