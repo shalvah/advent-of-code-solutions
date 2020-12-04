@@ -12,6 +12,7 @@ How many different passwords within the range given in your puzzle input meet al
 Your puzzle input is still 125730-579381.
 =end
 
+lo = 125730
 hi = 579381
 
 valid_passwords = []
