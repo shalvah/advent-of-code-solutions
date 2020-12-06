@@ -70,14 +70,16 @@ def generate_path(node, root = "COM")
   path
 end
 
-# Compute the shortest path by finding the paths to the root, then locating the closest intersection
-def compute_shortest_path(start_at, end_at)
+def compute_transfers(start_at, end_at)
   path_a = generate_path(start_at)
   path_b = generate_path(end_at)
   intersections = path_a & path_b
 
   closest = intersections.first
-  path = [*generate_path(start_at, closest), closest, *generate_path(end_at, closest).reverse]
+  # Compute the full path and return the number of transfers
+  # [*generate_path(start_at, closest), closest, *generate_path(end_at, closest).reverse].size - 1
+  # Or, simpler, use the indexes of the intersection
+  path_a.find_index(closest) + path_b.find_index(closest)
 end
 
-p compute_shortest_path("YOU", "SAN").size - 1
+p compute_transfers("YOU", "SAN")
