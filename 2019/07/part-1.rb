@@ -146,7 +146,7 @@ program = file.read.split(',')
 
 # Generate the 5! = 120 possible settings
 # Each setting can only appear once
-phase_settings = []
+amplifiers = []
 for a in (0..4)
   for b in (0..4)
     next if b == a
@@ -156,7 +156,7 @@ for a in (0..4)
         next if [a, b, c].include?(d)
         for e in (0..4)
           next if [a, b, c, d].include?(e)
-          phase_settings << [a, b, c, d, e]
+          amplifiers << [a, b, c, d, e]
         end
       end
     end
@@ -165,9 +165,9 @@ end
 
 
 max_thruster = 0
-phase_settings.each do |settings|
+amplifiers.each do |phase_settings|
   program_copy = program.clone # Rest memory
-  thruster = compute_thruster_signal(program_copy, settings)
+  thruster = compute_thruster_signal(program_copy, phase_settings)
   max_thruster = thruster if thruster > max_thruster
 end
 p max_thruster
