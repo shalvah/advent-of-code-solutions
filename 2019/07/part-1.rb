@@ -127,12 +127,12 @@ def run_intcode(program, output, &get_input)
   program.join(',')
 end
 
-def compute_thruster_signal(program, phase_settings)
+def compute_thruster_signal(program, amplifiers)
   input_signal = 0
-  phase_settings.each do |phase|
+  amplifiers.each do |phase_setting|
     output = []
     inputs = Enumerator.new do |yielder|
-      yielder.yield phase
+      yielder.yield phase_setting
       yielder.yield input_signal
     end
     run_intcode(program, output) { inputs.next }
@@ -146,7 +146,7 @@ program = file.read.split(',')
 
 # Generate the 5! = 120 possible settings
 # Each setting can only appear once
-amplifiers = []
+phase_settings = []
 for a in (0..4)
   for b in (0..4)
     next if b == a
@@ -156,7 +156,7 @@ for a in (0..4)
         next if [a, b, c].include?(d)
         for e in (0..4)
           next if [a, b, c, d].include?(e)
-          amplifiers << [a, b, c, d, e]
+          phase_settings << [a, b, c, d, e]
         end
       end
     end
@@ -165,9 +165,9 @@ end
 
 
 max_thruster = 0
-amplifiers.each do |phase_settings|
+phase_settings.each do |amplifiers|
   program_copy = program.clone # Rest memory
-  thruster = compute_thruster_signal(program_copy, phase_settings)
+  thruster = compute_thruster_signal(program_copy, amplifiers)
   max_thruster = thruster if thruster > max_thruster
 end
 p max_thruster
