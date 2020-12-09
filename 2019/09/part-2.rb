@@ -14,7 +14,7 @@ require './intcode'
 file = File.open("input.txt")
 input = file.read.split(',')
 
-program = Intcode.new(input)
-program.get_input = lambda { 2 }
-program.send_output = lambda { |output| p output }
-program.execute # Can a program execute itself? Who cares?
+input_fn = lambda { 2 }
+output_fn = lambda { |output| p output }
+program = Intcode.new(input, input_fn, output_fn)
+program.execute
