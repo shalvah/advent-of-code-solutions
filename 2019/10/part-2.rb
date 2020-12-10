@@ -63,6 +63,10 @@ The Elves are placing bets on which will be the 200th asteroid to be vaporized. 
 # This means any two points on the line must have gradient m = dy/dx
 # This means that, for any two points (x1, y1) and (x2, y2) and origin (a,b), y2-b/x2-a = y1-b/x1-a = m
 
+# A line passes through two points if they both satisfy the equation y = mx + c
+# This means any two points on the line must have gradient m = dy/dx
+# This means that, for any two points (x1, y1) and (x2, y2) and origin (a,b), y2-b/x2-a = y1-b/x1-a = m
+
 def find_gradient(origin, other_point)
   deltaY = (other_point[:y] - origin[:y]).to_f
   deltaX = (other_point[:x] - origin[:x]).to_f
@@ -139,8 +143,11 @@ def sort_clockwise(lines_of_sight)
     end
   end
 
+  # It's important that we sort the quadrants separately, to get the correct clockwise order
+  # Otherwise, we'd end up with points sorted by gradient across quadrants
+  
+  # Top-right quadrant
   q1_path = quadrants[0].sort_by do |(gradient, asteroids)|
-      # Top-right quadrant
       # We need Infinity to count as < 0
       if gradient[1] == Float::INFINITY
         [-1.0/0.0]
@@ -148,22 +155,12 @@ def sort_clockwise(lines_of_sight)
         [gradient[1]]
       end
     end
-  q2_path = quadrants[1].sort_by do |(gradient, asteroids)|
-    # Bottom-left quadrant
-    [gradient[1]]
-  end
-  q2_path = quadrants[1].sort_by do |(gradient, asteroids)|
-    # Bottom-right quadrant
-    [gradient[1]]
-  end
-  q3_path = quadrants[2].sort_by do |(gradient, asteroids)|
-    # Bottom-left quadrant
-    [gradient[1]]
-  end
-  q4_path = quadrants[3].sort_by do |(gradient, asteroids)|
-    # Top-left quadrant
-    [gradient[1]]
-  end
+  # Bottom-right quadrant
+  q2_path = quadrants[1].sort_by { |(gradient, asteroids)| [gradient[1]] }
+  # Bottom-left quadrant
+  q3_path = quadrants[2].sort_by { |(gradient, asteroids)| [gradient[1]] }
+  # Top-left quadrant
+  q4_path = quadrants[3].sort_by { |(gradient, asteroids)| [gradient[1]] }
 
   sorted = q1_path + q2_path + q3_path + q4_path
   sorted.to_h
@@ -190,6 +187,7 @@ end
 file = File.open("input.txt")
 input = file.read.split
 location, lines_of_sight, max_line_of_sight = find_best_location(set_layout(input))
+p location
 sorted_laser_paths = sort_clockwise(lines_of_sight)
 answer = find_nth_vaporized(sorted_laser_paths, 200)
 p answer
