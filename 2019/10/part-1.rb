@@ -113,7 +113,6 @@ def find_gradient(origin, other_point)
 end
 
 def set_layout input
-  layout = []
   asteroids = []
   input.each_with_index do |line, row|
     width = line.size
@@ -121,7 +120,6 @@ def set_layout input
       if char == "#"
         asteroids << {x: col.to_i, y: row.to_i}
       end
-      layout[(width * row) + col] = char
     end
   end
   asteroids
