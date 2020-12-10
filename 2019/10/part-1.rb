@@ -136,7 +136,7 @@ def find_best_location asteroids
 
       # We need to combine the direction with the gradient
       # to know which side of the current location the asteroid is on
-      direction = if index > current_location_index then "before" else "after" end
+      direction = if index > current_location_index then "after" else "before" end
       gradients[direction + gradient] ||= []
       gradients[direction + gradient] << other_asteroid
     end
