@@ -95,19 +95,19 @@ Directions = [
     :down_right,
 ]
 
-def calculate_new_state(current_coordinates, initial_state, seats_grid, row_count, column_count)
+def calculate_new_state(current_coordinates, initial_state, seats_grid)
   number_occupied_adjacent = 0
 
   if initial_state == "L"
     Directions.each do |dir|
-      number_occupied_adjacent += 1 if adjacent_seat_state(current_coordinates, seats_grid, dir, row_count, column_count) == "#"
+      number_occupied_adjacent += 1 if adjacent_seat_state(current_coordinates, seats_grid, dir) == "#"
     end
     return "#" if number_occupied_adjacent == 0
   end
 
   if initial_state == "#"
     Directions.each do |dir|
-      number_occupied_adjacent += 1 if (adjacent_seat_state(current_coordinates, seats_grid, dir, row_count, column_count)) == "#"
+      number_occupied_adjacent += 1 if (adjacent_seat_state(current_coordinates, seats_grid, dir)) == "#"
     end
     return "L" if number_occupied_adjacent >= 4
   end
@@ -115,31 +115,34 @@ def calculate_new_state(current_coordinates, initial_state, seats_grid, row_coun
   initial_state
 end
 
-def adjacent_seat_state(coordinates, current_seats_grid, direction, row_count, column_count)
+def adjacent_seat_state(coordinates, current_seats_grid, direction)
+  # Here, we're considering only what's immediately next to the current position
+  # If it's floor or out of bounds return nil
+  # Otherwise return the coordinates
   row, column = coordinates
-    case direction
-    when :up
-      row -= 1
-    when :down
-      row += 1
-    when :left
-      column -= 1
-    when :right
-      column += 1
-    when :up_left
-      row -= 1
-      column -= 1
-    when :up_right
-      row -= 1
-      column += 1
-    when :down_left
-      row += 1
-      column -= 1
-    when :down_right
-      row += 1
-      column += 1
-    end
-    adjacent = current_seats_grid[[row, column]]
+  case direction
+  when :up
+    row -= 1
+  when :down
+    row += 1
+  when :left
+    column -= 1
+  when :right
+    column += 1
+  when :up_left
+    row -= 1
+    column -= 1
+  when :up_right
+    row -= 1
+    column += 1
+  when :down_left
+    row += 1
+    column -= 1
+  when :down_right
+    row += 1
+    column += 1
+  end
+  adjacent = current_seats_grid[[row, column]]
 end
 
 file = File.open("input.txt")
@@ -159,7 +162,7 @@ loop do
   state_changed = false
   new_seats_grid = {}
   seats_grid.each do |current_coordinates, initial_state|
-    new_state = calculate_new_state(current_coordinates, initial_state, seats_grid, row_count, column_count)
+    new_state = calculate_new_state(current_coordinates, initial_state, seats_grid)
     new_seats_grid[current_coordinates] = new_state
     state_changed = true if new_state != initial_state
   end
