@@ -138,6 +138,8 @@ def calculate_new_state(current_coordinates, initial_state, seats_grid, row_coun
 end
 
 def adjacent_seat_state(coordinates, current_seats_grid, direction, row_count, column_count)
+  # Here, we're looking for "directionally adjacent"—skip any floor positions
+  # Return nil if out of bounds
   row, column = coordinates
   while row >= 0 && row < row_count &&
       column >= 0 && column < column_count
