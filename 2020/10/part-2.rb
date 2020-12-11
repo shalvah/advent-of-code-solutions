@@ -142,12 +142,12 @@ def find_paths(intervals)
       if current_interval == 3 ||
           (current_interval == 2 && previous_interval >= 2) ||
           (current_interval == 1 && previous_interval == 3)
-        # There's only one path to this one, so it's the same number of paths from root to this node as from root to that node
+        # Must pass throug node 1
         sums << 1
       elsif (current_interval == 1 && previous_interval == 1) ||
           (current_interval == 1 && previous_interval == 2) ||
           (current_interval == 2 && previous_interval == 1)
-        # Only two paths to here
+        # Can go directly to root
         sums << 2
       end
       next
