@@ -42,28 +42,27 @@ Your puzzle input is 1,17,0,10,18,11,6.
 input = [1,17,0,10,18,11,6]
 
 spoken_numbers = {}
-sequence = []
+current_number = []
 
 n = 2020
 n.times do |i|
   if i < input.size
-    number = input[i]
+    current_number = input[i]
   else
-    last_number_spoken = sequence.last
+    last_number_spoken = current_number
     if spoken_numbers[last_number_spoken] != nil
       last_spoken = spoken_numbers[last_number_spoken].last
       if spoken_numbers[last_number_spoken].size == 1
-        number = 0
+        current_number = 0
       else
         last_spoken_before_that = spoken_numbers[last_number_spoken][-2]
-        number = last_spoken - last_spoken_before_that
+        current_number = last_spoken - last_spoken_before_that
       end
     end
   end
 
-  sequence << number
-  spoken_numbers[number] ||= []
-  spoken_numbers[number] << i
+  spoken_numbers[current_number] ||= []
+  spoken_numbers[current_number] << i
 end
 
-p sequence.last
+p current_number
