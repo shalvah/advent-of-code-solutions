@@ -57,7 +57,7 @@ File.foreach('input.txt') do |line|
   else
     case input_mode
     when "fields"
-      match = line.match(/(?<field>\w+): (?<ranges>.+)/)
+      match = line.match(/(?<field>.+): (?<ranges>.+)/)
       ranges = match[:ranges].split(" or")
       ranges.each do |range|
         min, max = range.strip.split("-")
