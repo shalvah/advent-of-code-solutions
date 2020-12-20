@@ -163,6 +163,10 @@ To check that you've assembled the image correctly, multiply the IDs of the four
 Assemble the tiles into an image. What do you get if you multiply together the IDs of the four corner tiles?
 =end
 
+
+# This whole solution is based on the assumption that the "corners" will only fit exactly there.
+# ie the corner sqaures can only fit two other squares each.
+
 def parse_tiles(input)
   tiles_text = input.split("\n\n")
   tiles_text.map do |tile_text|
