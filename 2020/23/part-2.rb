@@ -13,19 +13,18 @@ In the above example (389125467), this would be 934001 and then 159792; multiply
 Determine which two cups will end up immediately clockwise of cup 1. What do you get if you multiply their labels together?
 =end
 
-def remove_next_three(cups, next_cup_keys, current_cup_key)
+def remove_next_three(cups, current_cup)
   next_three = []
 
-  original_cup_key = current_cup_key
+  original_cup = current_cup
 
   while next_three.size < 3
-    next_cup_key = next_cup_keys[current_cup_key]
-    next_three << cups[next_cup_key]
-    current_cup_key = next_cup_key
+    next_cup = cups[current_cup]
+    next_three << next_cup
+    current_cup = next_cup
   end
 
-  next_cup_keys[original_cup_key] = next_cup_keys[current_cup_key]
-  next_cup_keys[current_cup_key] = nil
+  cups[original_cup] = cups[current_cup]
   next_three
 end
 
@@ -46,80 +45,55 @@ def get_lower_cup(current_cup, excluded_cups, minimum, maximum)
   lower_cup
 end
 
-def insert_cups(picked_up, destination_index, next_cup_keys, cups_to_keys)
-  final = next_cup_keys[destination_index]
-  key = destination_index
+def insert_cups(picked_up, destination_cup,cups)
+  final = cups[destination_cup]
 
-  cup = picked_up[0]
-  cup_key = cups_to_keys[cup]
-  next_cup_keys[key] = cup_key
-  key = cup_key
-
-  cup = picked_up[1]
-  cup_key = cups_to_keys[cup]
-  next_cup_keys[key] = cup_key
-  key = cup_key
-
-  cup = picked_up[2]
-  cup_key = cups_to_keys[cup]
-  next_cup_keys[key] = cup_key
-
-  next_cup_keys[cup_key] = final
+  cups[destination_cup] = picked_up[0]
+  cups[picked_up[2]] = final
 end
 
-def generate_cups_list(cups, next_cup_keys, cups_to_keys)
-  start_at = cups_to_keys[1]
+def next_cups_from_1(cups)
+  current_cup = 1
   cups_list = []
-  current_key = next_cup_keys[start_at]
   2.times do
-    cups_list << cups[current_key]
-    current_key = next_cup_keys[current_key]
+    cups_list << cups[current_cup]
+    current_cup = cups[current_cup]
   end
 
   cups_list
 end
 
-cups_list = "389125467".split('').map(&:to_i)
-next_cup_keys = {}
-cups_to_keys = {}
+cups_list = "463528179".split('').map(&:to_i)
+
+cups = []
 cups_list.each_with_index do |cup, index|
-  next_cup_keys[index] = index + 1
-  cups_to_keys[cup] = index
+  cups[cup] = cups_list[index + 1]
 end
 
 min = cups_list.min
 max = cups_list.max
 
 i = max + 1
-while i <= 1_000_000
-  next_cup_keys[cups_list.size - 1] = cups_list.size
-  cups_to_keys[i] = cups_list.size
-  cups_list << i
+while i < 1_000_000
+  cups[i] = i + 1
   i += 1
 end
 
-next_cup_keys[cups_list.size - 1] = 0
+cups[cups_list[-1]] = max + 1
+cups[1_000_000] = cups_list[0]
+max = 1_000_000
 
-cups = {}
-cups_list.each_with_index do |cup, index|
-  cups[index] = cup
-end
-
-current_cup_key = 0
+current_cup = cups_list[0]
 
 moves = 0
 while moves < 10_000_000
   moves += 1
-  pick_up = remove_next_three(cups, next_cup_keys, current_cup_key)
-  destination_cup = get_lower_cup(cups[current_cup_key], pick_up, min, max)
-  destination_index = cups_to_keys[destination_cup]
-  insert_cups(pick_up, destination_index, next_cup_keys, cups_to_keys)
-  current_cup_key = next_cup_keys[current_cup_key]
+  pick_up = remove_next_three(cups, current_cup)
+  destination_cup = get_lower_cup(current_cup, pick_up, min, max)
+
+  insert_cups(pick_up, destination_cup, cups)
+  current_cup = cups[current_cup]
+  # p [current_cup, cups[current_cup]]
 end
 
-p position_of_cup_1 = cups_to_keys[1]
-p next_cup_key = next_cup_keys[position_of_cup_1]
-p next_cup = cups[next_cup_key]
-p next_cup_2 = cups[next_cup_keys[next_cup_key]]
-p next_cup * next_cup_2
-p generate_cups_list(cups, next_cup_keys, cups_to_keys)
+p next_cups_from_1(cups).reduce(:*)
