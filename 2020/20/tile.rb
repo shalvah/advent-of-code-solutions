@@ -11,17 +11,19 @@ class Tile
   def initialize(text)
     first_line, *rest = text.split("\n")
     @id = first_line.scan(/\d+/)[0]
-    @top_border, *@original_inner_contents, @bottom_border = rest
+    @original_contents = rest
+    top_border, *@original_inner_contents, bottom_border = @original_contents
     # All borders are read L-R or T-D
-    @left_border = rest.map { |str| str[0] }.join
-    @right_border = rest.map { |str| str[-1] }.join
-    @borders = [@left_border, @top_border, @right_border, @bottom_border,]
+    left_border = @original_contents.map { |str| str[0] }.join
+    right_border = @original_contents.map { |str| str[-1] }.join
+    @borders = [left_border, top_border, right_border, bottom_border,]
 
     @flips_vertical = 0
     @flips_horizontal = 0
     @orientation = 0
-    # Trim borders
+    # Trim left and right borders
     @original_inner_contents = @original_inner_contents.map { |str| str[1, str.size - 2].split("") }
+    @original_contents = @original_contents.map { |str| str.split("") }
     @shared_borders = {}
   end
 
@@ -148,10 +150,10 @@ class Tile
     end
   end
 
-  # Print the tile (without borders)
-  def image
+  # Print the tile
+  def image(with_borders: false)
     # The rows of the original tile
-    contents = @original_inner_contents.clone
+    contents = with_borders ? @original_contents.clone : @original_inner_contents.clone
 
     flipped_h = @flips_horizontal % 2 == 1
     flipped_v = @flips_vertical % 2 == 1
@@ -189,6 +191,7 @@ class Tile
     if flipped_h
       contents = Transformer::flip_horizontal(contents)
     end
+
     contents
   end
 
