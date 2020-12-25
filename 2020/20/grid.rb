@@ -45,16 +45,23 @@ class Grid
   end
 
   # Print the image
-  def image(with_separator: false)
-    @grid.map do |row|
+  def image(with_separator: false, with_borders: false)
+    @grid.map do |row_of_tiles|
       row_content = []
-      row.each do |tile|
-        tile.image.each_with_index do |line, index|
+      row_of_tiles.each do |tile|
+        tile.image(with_borders: with_borders).each_with_index do |line, index|
           row_content[index] ||= []
+          # Separate the tiles vertically
           row_content[index] << " | " if with_separator
           row_content[index].push(*line)
         end
       end
+
+      if with_separator
+        # Separate the tiles horizontally
+        row_content << ("-" * row_content[0].size).split('')
+      end
+
       row_content
     end.flatten(1)
   end
