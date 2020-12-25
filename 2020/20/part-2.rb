@@ -136,7 +136,7 @@ common = tiles.map do |tile_id, tile|
 end.to_h
 
 corners = common.select { |id, borders_by_position| borders_by_position.values.flatten(1).size == 2 }
-p corners.keys
+puts "Corners: #{corners.keys}"
 
 width = height = Math.sqrt(tiles.size)
 grid = Grid.new(height)
@@ -310,7 +310,13 @@ loop do
 end
 
 File.write("tiles.txt", grid.ids)
+
+# Verify that all tiles fit properly
 grid.verify
+
+# For eye comparison
+File.write("grid.borders.txt", Grid.print_grid(grid.image(with_separator: true, with_borders: true)))
+File.write("grid.txt", Grid.print_grid(grid.image(with_separator: true)))
 
 grid_content = grid.image
 original_grid_content = Marshal.load(Marshal.dump(grid_content))
@@ -322,7 +328,6 @@ Pattern:
  #  #  #  #  #  #
 
 20 characters long
-The content will be 24 characters long, so we have a limited search range
 =end
 
 # Some of these are probably equivalent; I don't care
@@ -376,11 +381,10 @@ loop do
   end
 end
 
-File.write("grid.txt", Grid.print_grid(grid_content))
-p sea_monster_locations
-p sea_monster_locations.size
+File.write("grid.monsters.txt", Grid.print_grid(grid_content))
 
-# Now subtract 15 * no of monsters from total #s
-# (bc 15 #s per monster)
+puts "Sea monster locations [line, start index]: #{sea_monster_locations}"
+puts "Sea monsters: #{sea_monster_locations.size}"
+
 content = grid_content.flat_map(&:join).join # Convert to simple string
 p content.count("#")
