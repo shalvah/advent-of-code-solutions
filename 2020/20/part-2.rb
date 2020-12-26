@@ -192,8 +192,10 @@ loop do
       #        |     |
       #        | --- |
       #
-      next_tile.flip_horizontal
       next_tile.rotate
+      next_tile.rotate
+      next_tile.rotate
+      next_tile.flip_horizontal
     when :bottom
       # Them = | --- |
       #        |     |
@@ -320,6 +322,7 @@ File.write("grid.txt", Grid.print_grid(grid.image(with_separator: true)))
 
 grid_content = grid.image
 original_grid_content = Marshal.load(Marshal.dump(grid_content))
+File.write("grid2.txt", Grid.print_grid(original_grid_content))
 
 =begin
 Pattern:
