@@ -1,70 +1,54 @@
-input = File.read(File.join(__dir__, "input.txt")).split("\n")
-bingo_input = input.shift.split(',')
-input.shift
+bingo_input, *input = File.read(File.join(__dir__, "input.txt")).split("\n").reject(&:empty?)
+
 boards = []
 number_appearances = {}
-input.each_slice(6) do |board_lines|
-  board_lines.pop if board_lines.length == 6
-  board_lines = board_lines.map(&:split)
-  boards << board_lines
+input.each_slice(5) do |board_lines|
+  boards << board_lines.map!(&:split)
 
   board_index = boards.size - 1
   board_lines.each_with_index do |row, row_index|
     row.each_with_index do |value, col_index|
       number_appearances[value] ||= []
-      number_appearances[value] << { board: board_index, row: row_index, column: col_index }
+      number_appearances[value] << [board_index, row_index, col_index]
     end
   end
 end
 
-winning_board_index = nil
-winner = nil
-marked_rows = []
-marked_columns = []
+winning_board_index, winning_state = nil, nil
 marked_numbers = []
-until bingo_input.empty? do
-  next_number = bingo_input.shift
-  marked_numbers << next_number
-  number_appearances[next_number].each do |details|
-    board_index = details[:board]
+marked_columns, marked_rows = [], []
+bingo_input = bingo_input.split(',')
+until winning_board_index != nil do
+  marked_numbers << (next_number = bingo_input.shift)
 
+  number_appearances[next_number].each do |(board_index, row_index, column_index)|
     marked_rows[board_index] ||= (0..4).map { 0 }
     marked_columns[board_index] ||= (0..4).map { 0 }
-    marked_rows[board_index][details[:row]] += 1
-    marked_columns[board_index][details[:column]] += 1
-    if marked_rows[board_index][details[:row]] >= 5
+    marked_rows[board_index][row_index] += 1
+    marked_columns[board_index][column_index] += 1
+
+    if marked_rows[board_index][row_index] >= 5
       winning_board_index = board_index
-      winner = [:row, details[:row]]
-      break
-    elsif marked_columns[board_index][details[:column]] >= 5
+      winning_state = [:row, row_index]
+    elsif marked_columns[board_index][column_index] >= 5
       winning_board_index = board_index
-      winner = [:column, details[:column]]
-      break
+      winning_state = [:column, column_index]
     end
   end
-
-  break if winning_board_index != nil
 end
 
 unmarked_numbers = []
-case winner[0]
-when :row
-  boards[winning_board_index].each_with_index do |row, index|
-    next if index == winner[1]
-
-    new_row = row.filter do |value|
-      !marked_numbers.include?(value)
-    end
-    unmarked_numbers << new_row
+board = case winning_state[0]
+  when :row
+    boards[winning_board_index]
+  when :column
+    boards[winning_board_index].transpose
   end
-when :column
-  boards[winning_board_index].transpose.each_with_index do |column, index|
-    next if index == winner[1]
 
-    new_column = column.filter do |value|
-      !marked_numbers.include?(value)
-    end
-    unmarked_numbers << new_column
+board.each_with_index do |row_or_col, index|
+  next if index == winning_state[1]
+  unmarked_numbers << row_or_col.filter do |value|
+    !marked_numbers.include?(value)
   end
 end
 
