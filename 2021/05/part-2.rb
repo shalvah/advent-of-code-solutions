@@ -22,7 +22,7 @@ input.each do |(x1, y1, x2, y2)|
     x, y = x1, y1
     until [x, y] == [x2, y2] do
       mark_covered(x, y)
-      x, y = dx.positive? ? (x + m) : (x - m), dy.positive? ? (y + m) : (y - m)
+      x, y = dx.positive? ? (x + 1) : (x - 1), dy.positive? ? (y + m) : (y - m)
     end
     mark_covered(x2, y2)
   end
