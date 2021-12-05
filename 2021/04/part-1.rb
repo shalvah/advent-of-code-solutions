@@ -47,9 +47,7 @@ board = case winning_state[0]
 
 board.each_with_index do |row_or_col, index|
   next if index == winning_state[1]
-  unmarked_numbers << row_or_col.filter do |value|
-    !marked_numbers.include?(value)
-  end
+  unmarked_numbers << row_or_col - marked_numbers
 end
 
 sum = unmarked_numbers.map { |line| line.map(&:to_i).sum }.sum

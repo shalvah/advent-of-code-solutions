@@ -16,13 +16,13 @@ input.each do |(x1, y1, x2, y2)|
     range = (y2 > y1) ? (y1..y2) : (y2..y1)
     range.each { |y| mark_covered(x1, y) }
   else
-    m = ((y2 - y1) / (x2 - x1)).abs
+    dy, dx = (y2 - y1), (x2 - x1)
+    m = (dy/dx).abs
 
-    x1, y1, x2, y2 = [x2, y2, x1, y1] if x2 < x1
     x, y = x1, y1
     until [x, y] == [x2, y2] do
       mark_covered(x, y)
-      x, y = x + m, y2 > y1 ? y + m : y - m
+      x, y = dx.positive? ? (x + m) : (x - m), dy.positive? ? (y + m) : (y - m)
     end
     mark_covered(x2, y2)
   end
