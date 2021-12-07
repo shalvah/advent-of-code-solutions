@@ -1,9 +1,6 @@
 fish = File.read(File.join(__dir__, "input.txt")).split(",").map(&:to_i)
 
-timers = fish.each_with_object({}) do |timer, all|
-  all[timer] ||= 0
-  all[timer] += 1
-end
+timers = fish.tally
 
 (256 / 7).times do
   next_week = timers.dup
