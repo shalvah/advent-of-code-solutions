@@ -7,10 +7,10 @@ def neighbours(x, y)
   above = [x, y - 1, $input[y - 1][x]] rescue nil
 
   [
-    (below if y.between?(0, $input.size - 2)),
-    (above if y.between?(1, $input.size - 1)),
-    (left if x.between?(1, $input[y].size - 1)),
-    (right if x.between?(0, $input[y].size - 2)),
+    (below if y < $input.size - 1),
+    (above if y > 0),
+    (left if x > 0),
+    (right if x < $input[y].size - 1),
   ].compact.filter { |n| n[2] != 9 }
 end
 
