@@ -1,14 +1,14 @@
 $input = File.read(File.join(__dir__, "input.txt")).split("\n").map { |line| line.split("").map(&:to_i) }
 
 def neighbours(x, y)
-  below = [x, y + 1] rescue nil
-  right = [x + 1, y] rescue nil
-  left = [x - 1, y] rescue nil
-  above = [x, y - 1] rescue nil
-  left_below = [x - 1, y + 1] rescue nil
-  left_above = [x - 1, y - 1] rescue nil
-  right_below = [x + 1, y + 1] rescue nil
-  right_above = [x + 1, y - 1] rescue nil
+  below = [x, y + 1]
+  right = [x + 1, y]
+  left = [x - 1, y]
+  above = [x, y - 1]
+  left_below = [x - 1, y + 1]
+  left_above = [x - 1, y - 1]
+  right_below = [x + 1, y + 1]
+  right_above = [x + 1, y - 1]
 
   [
     (below if y < $input.size - 1),
