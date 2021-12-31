@@ -1,4 +1,4 @@
-input = File.read(File.join(__dir__, "input.txt")).split("\n")
+input = File.read(File.join(__dir__, "input.txt")).split("\n").map { |line| line.split("").map(&:to_i) }
 
 # Ruby's ~ gives us ones complement, so we reimplement bit flipping
 def flip_bit(bit)
@@ -10,20 +10,11 @@ def flip_bit(bit)
   end
 end
 
-most_common_bits = []
-seen_bits = []
-input.each do |line|
-  line.split("").each_with_index do |bit, index|
-    bit = bit.to_i
-    seen_bits[index] = [0, 0] unless seen_bits[index]
-    seen_bits[index][bit] += 1
-    if seen_bits[index][bit] > seen_bits[index][~bit]
-      most_common_bits[index] = bit
-    end
-  end
+seen_bits_at_each_index = input.transpose.map(&:tally)
+most_common_bits = seen_bits_at_each_index.map do |count|
+  count[0] > count[1] ? 0 : 1
 end
-
 gamma = most_common_bits.join.to_i(2)
-epsilon = most_common_bits.map { |b| flip_bit(b) }.join.to_i(2)
+epsilon = most_common_bits.map(&method(:flip_bit)).join.to_i(2)
 
 p gamma * epsilon

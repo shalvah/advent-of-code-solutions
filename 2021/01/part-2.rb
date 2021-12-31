@@ -1,16 +1,6 @@
-input = File.read(File.join(__dir__, "input.txt")).split
+input = File.read(File.join(__dir__, "input.txt")).split.map(&:to_i)
 
-greater = 0
-prev_sum = Float::INFINITY
+increased_from_previous = Proc.new { |(prev_sum, sum)| sum > prev_sum }
 
-input.each_with_index do |measurement, index|
-  next if index < 2
-
-  sum = Integer(measurement) + Integer(input[index - 1]) + Integer(input[index - 2])
-  if sum > prev_sum
-    greater += 1
-  end
-  prev_sum = sum
-end
-
-p greater
+sliding_window_sums = input.each_cons(3).map(&:sum)
+p sliding_window_sums.each_cons(2).filter(&increased_from_previous).size

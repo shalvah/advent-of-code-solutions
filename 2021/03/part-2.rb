@@ -1,42 +1,23 @@
-input = File.read(File.join(__dir__, "input.txt")).split("\n")
+input = File.read(File.join(__dir__, "input.txt")).split("\n").map { |line| line.split("").map(&:to_i) }
 
-number_of_bits = input[0].size
+def find_rating(input, criteria)
+  passing_lines = input
+  (0...input[0].size).each do |bit_index|
+    break if passing_lines.size === 1
 
-lines_oxygen = input
-(0...number_of_bits).each do |bit_index|
-  seen_bits_oxygen = [0, 0]
-
-  break if lines_oxygen.size === 1
-
-  (0...lines_oxygen.size).each do |line_index|
-    current_bit = lines_oxygen[line_index][bit_index].to_i
-    seen_bits_oxygen[current_bit] += 1
+    seen_bits = passing_lines.map { |number| number[bit_index] }.tally
+    passing_lines = passing_lines.filter do |number|
+      number[bit_index] == criteria.call(seen_bits)
+    end
   end
 
-  lines_oxygen = lines_oxygen.filter do |line|
-    current_bit = line[bit_index].to_i
-    current_bit == ((seen_bits_oxygen[1] >= seen_bits_oxygen[0]) ? 1 : 0)
-  end
+  passing_lines.pop
 end
 
-lines_co2 = input
-(0...number_of_bits).each do |bit_index|
-  seen_bits_co2 = [0, 0]
+most_common_bit = ->(seen_bits) { (seen_bits[1] >= seen_bits[0]) ? 1 : 0 }
+least_common_bit = ->(seen_bits) { (seen_bits[0] <= seen_bits[1]) ? 0 : 1 }
 
-  break if lines_co2.size === 1
+oxygen = find_rating(input, most_common_bit)
+co2 = find_rating(input, least_common_bit)
 
-  (0...lines_co2.size).each do |line_index|
-    current_bit = lines_co2[line_index][bit_index].to_i
-    seen_bits_co2[current_bit] += 1
-  end
-
-  lines_co2 = lines_co2.filter do |line|
-    current_bit = line[bit_index].to_i
-    current_bit == ((seen_bits_co2[0] <= seen_bits_co2[1]) ? 0 : 1)
-  end
-end
-
-co2 = lines_co2.pop
-oxygen = lines_oxygen.pop
-
-p oxygen.to_i(2) * co2.to_i(2)
+p oxygen.join.to_i(2) * co2.join.to_i(2)

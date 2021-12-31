@@ -1,17 +1,18 @@
 input = File.read(File.join(__dir__, "input.txt")).split("\n")
+  .map { |line| line.split(" ") }
 
-x = 0
-d = 0
-input.each do |line|
-  direction, amount = line.split(" ")
+apply_instruction = Proc.new do |previous_positions, (direction, amount)|
+  x, d = previous_positions
   case direction
   when "forward"
-    x += Integer(amount)
+    [x + Integer(amount), d]
   when "up"
-    d -= Integer(amount)
+    [x, d - Integer(amount)]
   when "down"
-    d += Integer(amount)
+    [x, d + Integer(amount)]
   end
 end
 
-p x*d
+initial_positions = [0, 0]
+final_positions = input.reduce(initial_positions, &apply_instruction)
+p final_positions.reduce(&:*)

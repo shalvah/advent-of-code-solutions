@@ -1,10 +1,5 @@
-input = File.read(File.join(__dir__, "input.txt")).split
+input = File.read(File.join(__dir__, "input.txt")).split.map(&:to_i)
 
-greater = 0
-input.each_with_index do |measurement, index|
-  if index > 0 && Integer(measurement) > Integer(input[index - 1])
-    greater += 1
-  end
-end
+increased_from_previous = Proc.new { |measurements| measurements[1] > measurements[0] }
 
-p greater
+p input.each_cons(2).filter(&increased_from_previous).size
