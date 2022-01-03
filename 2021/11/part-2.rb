@@ -1,75 +1,27 @@
-$input = File.read(File.join(__dir__, "input.txt")).split("\n").map { |line| line.split("").map(&:to_i) }
+require_relative './models'
 
-def neighbours(x, y)
-  below = [x, y + 1]
-  right = [x + 1, y]
-  left = [x - 1, y]
-  above = [x, y - 1]
-  left_below = [x - 1, y + 1]
-  left_above = [x - 1, y - 1]
-  right_below = [x + 1, y + 1]
-  right_above = [x + 1, y - 1]
-
-  [
-    (below if y < $input.size - 1),
-    (above if y > 0),
-    (left if x > 0),
-    (right if x < $input[y].size - 1),
-    (left_below if x > 0 && y < $input.size - 1),
-    (left_above if x > 0 && y > 0),
-    (right_below if x < $input[y].size - 1 && y < $input.size - 1),
-    (right_above if x < $input[y].size - 1 && y > 0),
-  ].compact
+energy_levels = File.read(File.join(__dir__, "input.txt")).split("\n").map.with_index do |line, y|
+  line.split("").map.with_index { |energy, x| Octopus.new(energy, x, y) }
 end
-
-energy_levels = $input
-
-require 'set'
+grid = Grid.new(energy_levels)
 
 step = 0
-synced = false
-until synced do
+
+loop do
   step += 1
-  next_state = energy_levels.map(&:dup)
-  flashed = Set.new
+  flasher = Flasher.new(grid)
 
-  # Part A and B: increase levels by 1, and flash
-  energy_levels.each_with_index do |line, y|
-    line.each_with_index do |octopus, x|
-      next_state[y][x] += 1
-      if octopus > 9 && !flashed.include?([x, y])
-        flashed << [x, y]
-        # Increment for neighbours
-        neighbours(x, y).each { |(x_n, y_n)| next_state[y_n][x_n] += 1 }
-      end
+  energy_levels.each do |line|
+    line.each do |octopus|
+      octopus.energy_level += 1
+      flasher.flash(octopus) if flasher.can_be_flashed(octopus)
     end
   end
 
-  # Keep flashing, until there's no more left to flash🤪
-  found_9 = true
-  while found_9
-    found_9 = false
-    next_state.each_with_index do |line, y|
-      line.each_with_index do |octopus, x|
-        if octopus > 9 && !flashed.include?([x, y])
-          found_9 = true
-          flashed << [x, y]
-          # Increment for neighbours
-          neighbours(x, y).each { |(x_n, y_n)| next_state[y_n][x_n] += 1 }
-        end
-      end
-    end
-  end
+  break if flasher.all_flashed
 
-  # Check answer, or do Part C: reset all flashed to 0
-  if flashed.size === (energy_levels.size * energy_levels[0].size)
-    synced = true
-  else
-    flashed.each { |(x, y)| next_state[y][x] = 0 }
-  end
-
-  energy_levels = next_state
-  flashed
+  flasher.reset
+  flasher.number_of_flashes
 end
 
 p step

@@ -10,7 +10,7 @@ unique_segment_counts = {
 count = input.map do |input_line|
   input_signals, output_signals = input_line.split(" | ").map{ |line| line.split }
   output_signals.filter do |v|
-    unique_segment_counts.keys.include? v.length.to_s
+    unique_segment_counts[v.length.to_s] != nil
   end.size
 end.sum
 

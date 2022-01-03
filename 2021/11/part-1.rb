@@ -1,4 +1,34 @@
-$input = File.read(File.join(__dir__, "input.txt")).split("\n").map { |line| line.split("").map(&:to_i) }
+require_relative './models'
+
+energy_levels = File.read(File.join(__dir__, "input.txt")).split("\n").map.with_index do |line, y|
+  line.split("").map.with_index { |energy, x| Octopus.new(energy, x, y) }
+end
+grid = Grid.new(energy_levels)
+
+all_flashes = 100.times.map do
+  flasher = Flasher.new(grid)
+
+  # Part A and B: increase levels by 1, and flash (cascading as needed)
+  energy_levels.each do |line|
+    line.each do |octopus|
+      octopus.energy_level += 1
+      flasher.flash(octopus) if flasher.can_be_flashed(octopus)
+    end
+  end
+
+  # Part C: reset all flashed to 0
+  flasher.reset
+
+  flasher.number_of_flashes
+end
+
+p all_flashes.sum
+
+
+=begin
+# Procedural version:
+
+energy_levels = $input = File.read(File.join(__dir__, "input.txt")).split("\n").map { |line| line.split("").map(&:to_i) }
 
 def neighbours(x, y)
   below = [x, y + 1] rescue nil
@@ -21,8 +51,6 @@ def neighbours(x, y)
     (right_above if x < $input[y].size - 1 && y > 0),
   ].compact
 end
-
-energy_levels = $input
 
 require 'set'
 
@@ -58,13 +86,12 @@ all_flashes = 100.times.map do
     end
   end
 
-
   # Part C: reset all flashed to 0
   flashed.each { |(x, y)| next_state[y][x] = 0 }
 
   energy_levels = next_state
-  flashed
+  flashed.size
 end
 
-
-p all_flashes.map(&:size).sum
+p all_flashes.sum
+=end

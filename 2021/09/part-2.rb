@@ -3,8 +3,8 @@ $input = File.read(File.join(__dir__, "input.txt")).split("\n").map { |line| lin
 def neighbours(x, y)
   below = [x, y + 1, $input[y + 1][x]] rescue nil
   right = [x + 1, y, $input[y][x + 1]] rescue nil
-  left = [x - 1, y, $input[y][x - 1]] rescue nil
-  above = [x, y - 1, $input[y - 1][x]] rescue nil
+  left = [x - 1, y, $input[y][x - 1]]
+  above = [x, y - 1, $input[y - 1][x]]
 
   [
     (below if y < $input.size - 1),
@@ -14,47 +14,46 @@ def neighbours(x, y)
   ].compact.filter { |n| n[2] != 9 }
 end
 
-low = []
+$low_points = []
 $input.each_with_index do |line, y|
   line.each_with_index do |location, x|
     if neighbours(x, y).all? { |x_n, y_n, neighbour| location < neighbour }
-      low << [x, y, location]
+      $low_points << [x, y, location]
     end
   end
 end
 
-basins = low.map do |x, y, low_point|
-  locations_in_basin = [[x, y, low_point]]
-  locations_in_basin.each do |x_n, y_n, location|
-    neighbours = neighbours(x_n, y_n).filter { |x_nn, y_nn, n_n| !locations_in_basin.include?([x_nn, y_nn, n_n]) }
-    locations_in_basin.push(*neighbours)
+def iterative_version
+  basins = $low_points.map do |x, y, low_point|
+    locations_in_basin = [[x, y, low_point]]
+    locations_in_basin.each do |x_n, y_n, location|
+      neighbours = neighbours(x_n, y_n).filter { |*neighbour| !locations_in_basin.include?(*neighbour) }
+      locations_in_basin.push(*neighbours)
+    end
+    locations_in_basin
   end
-  locations_in_basin
 end
 
-p basins.map(&:size).max(3).reduce(:*)
+def recursive_version
+  require 'set'
 
-=begin
+  def get_surrounding_basin(x, y, location, visited_points = [])
+    neighbours = neighbours(x, y) - visited_points
 
-# Recursive version:
-require 'set'
-
-def get_basin(x, y, location, basin)
-  return basin if basin.include? [x, y, location]
-
-  basin << [x, y, location]
-
-  neighbours = all_neighbours(x, y).filter { |n| n[2] != 9 }
-  neighbours.each do |x_n, y_n, neighbour|
-    basin = get_basin(x_n, y_n, neighbour, basin)
+    neighbours_basins = Set.new(neighbours)
+    neighbours.each do |x_n, y_n, location_n|
+      visited_points << [x_n, y_n, location_n]
+      neighbours_basins = neighbours_basins.merge(get_surrounding_basin(x_n, y_n, location_n, visited_points))
+    end
+    neighbours_basins
   end
-  basin
+
+  basins = $low_points.map do |x, y, location|
+    basin = get_surrounding_basin(x, y, location, [[x, y, location]])
+    basin << [x, y, location]
+  end
 end
 
-basins = low.map do |x, y, location|
-  get_basin(x, y, location, Set.new)
-end
 
+basins = recursive_version
 p basins.map(&:size).max(3).reduce(:*)
-
-=end

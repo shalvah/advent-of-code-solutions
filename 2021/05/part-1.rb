@@ -4,8 +4,7 @@ end
 
 $covered = {}
 def mark_covered(x, y)
-  $covered["#{x},#{y}"] ||= 0
-  $covered["#{x},#{y}"] += 1
+  $covered["#{x},#{y}"] = ($covered["#{x},#{y}"] || 0) + 1
 end
 
 input.each do |(x1, y1, x2, y2)|
