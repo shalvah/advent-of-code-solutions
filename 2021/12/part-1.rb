@@ -1,6 +1,21 @@
 input = File.read(File.join(__dir__, "input.txt")).split("\n").map { |line| line.split("-") }
 
-require 'set'
+require_relative './models'
+
+all_points = PointRegistry.new
+input.each do |(p1, p2)|
+  all_points.find(p1).connect(all_points.find(p2))
+  all_points.find(p2).connect(all_points.find(p1))
+end
+
+already_visited = Proc.new do |p, path_so_far|
+  p.is_lowercase? ? path_so_far.has_point?(p) : false
+end
+paths = Finder.new(all_points, &already_visited).find_paths("start", "end")
+p paths.size
+
+=begin
+# Procedural version:
 
 $paths = {}
 input.each do |(p1, p2)|
@@ -28,3 +43,4 @@ def find_paths_to_end(point, visited = [])
 end
 
 p find_paths_to_end("start").size
+=end
