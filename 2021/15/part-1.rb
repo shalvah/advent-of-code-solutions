@@ -37,6 +37,7 @@ end
 
 # Now we have minimal cost for each point, if we're only going up and left (from destination)
 # Let's recalculate, including *all* neighbours this time
+# We repeat this until we can't find a better path
 previous = minimal_risk_levels[0][0] - risk_levels[0][0]
 latest = nil
 until previous == latest do
