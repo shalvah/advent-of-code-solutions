@@ -9,7 +9,6 @@ end
 
 sum = SnailfishNumber.sum(*snailfish_numbers)
 
-p sum
 p sum.magnitude
 
 
