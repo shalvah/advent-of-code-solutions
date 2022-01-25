@@ -1,22 +1,23 @@
 # Monkey-patch because I'm lazy
 # This way, the transforms work on Beacon instances or bare arrays
 class Array
-  def x
-    self[0];
-  end
+  def x; self[0]; end
 
-  def y
-    self[1];
-  end
+  def y; self[1]; end
 
-  def z
-    self[2];
-  end
+  def z; self[2]; end
 end
 
 class Scanner
   attr_reader :gaps, :index, :beacons
   attr_accessor :absolute_position, :transforms
+
+  def self.from_readings(readings, index)
+    beacons = readings.map.with_index do |beacon_coords, beacon_index|
+      Beacon.new(*beacon_coords, beacon_index)
+    end
+    new(index, beacons)
+  end
 
   def initialize(index, beacons)
     @index = index
@@ -48,8 +49,8 @@ class Scanner
   end
 
   def transform(point)
-    @transforms.each { |t| point = t.call(point) }
-    point
+    # Proc#>> is lovely! Easy function composition.
+    @transforms.reduce(&:>>).call(point)
   end
 
   def resolve_point(point)
@@ -71,6 +72,7 @@ class Beacon
     @index = index
   end
 
+  # Absolute distance (squared) between this point and another point
   def gap(other_beacon)
     return 0 if index == other_beacon.index
 
@@ -87,8 +89,9 @@ class Beacon
   end
 end
 
-# Could do a matrix multiplication, but meh
-TRANSFORMS = [
+# Could do a matrix multiplication instead, but meh.
+# Let's just write out all the possibilities.
+POSSIBLE_TRANSFORMS = [
   ->(b) { [b.x, b.y, b.z] },
   ->(b) { [-b.y, b.x, b.z] },
   ->(b) { [-b.x, -b.y, b.z] },

@@ -5,12 +5,8 @@ end
 ### Same as Part 1...
 require_relative './models'
 
-scanners = scanners_readings.map.with_index do |readings, scanner_index|
-  beacons = readings.map.with_index do |beacon_coords, beacon_index|
-    Beacon.new(*beacon_coords, beacon_index)
-  end
-  Scanner.new(scanner_index, beacons)
-end
+
+scanners = scanners_readings.map.with_index(&Scanner.method(:from_readings))
 
 scanners_to_process = scanners.dup
 resolved_scanners = [scanners_to_process.shift]
@@ -37,7 +33,7 @@ until resolved_scanners.compact.size == scanners.size
 
   pos_wrt_other = nil
   # The correct transform is the one where the distance is constant
-  winning_transform = TRANSFORMS.find do |transform|
+  winning_transform = POSSIBLE_TRANSFORMS.find do |transform|
     offsets = overlapping_beacons[0..1].map do |b, other_b|
       other_b.get_offset(b, transform)
     end
