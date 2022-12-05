@@ -23,7 +23,7 @@ move = lambda do |instruction|
 end
 instructions.each(&move)
 
-p stacks.map { |k, v| v.last }.join
+p stacks.values.map(&:last).join
 
 
 # Part 2
@@ -35,4 +35,4 @@ end
 
 instructions.each(&move)
 
-p stacks.map { |k, v| v.last }.join
+p stacks.values.map(&:last).join
