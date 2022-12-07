@@ -22,15 +22,15 @@ tree = {}
 tree[pwd[0]] = {}
 
 commands_and_outputs.each do |(command_line, output)|
-  command, *args = command_line
+  command, arg = command_line
   if command == 'cd'
-    case args[0]
+    case arg
       when '/'
         pwd = ['']
       when '..'
         pwd.pop
       else
-        pwd << args[0]
+        pwd << arg
     end
   else
     if command == 'ls'
