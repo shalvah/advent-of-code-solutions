@@ -1,4 +1,4 @@
-input = File.read('day_3.txt')
+input = File.read('day_03.txt')
 
 item_to_priority = lambda do |item|
   case item
