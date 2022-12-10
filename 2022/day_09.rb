@@ -1,4 +1,4 @@
-movements = File.readlines('day_9.txt').map { |line| line.split(' ') }
+movements = File.readlines('day_09.txt').map { |line| line.split(' ') }
 
 $head_position = [0, 0]
 $tail_position = [0, 0]
