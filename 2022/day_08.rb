@@ -1,4 +1,4 @@
-grid = File.read('day_8.txt').split.map { _1.split('').map(&:to_i) }
+grid = File.read('day_08.txt').split.map { _1.split('').map(&:to_i) }
 
 # grid.each { p _1 }
 # puts "\n"
