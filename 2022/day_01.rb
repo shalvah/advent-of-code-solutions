@@ -1,4 +1,4 @@
-input = File.read('day_1.txt').split("\n\n")
+input = File.read('day_01.txt').split("\n\n")
 
 quantities = input.each.map do |chunk|
   chunk.each_line.map(&:to_i).sum
