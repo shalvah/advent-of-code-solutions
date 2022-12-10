@@ -1,4 +1,4 @@
-crates, instructions = File.read('day_5.txt').split("\n\n")
+crates, instructions = File.read('day_05.txt').split("\n\n")
 
 $stacks = Hash.new { |hash, key| hash[key] = [] }
 
