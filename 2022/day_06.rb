@@ -1,4 +1,4 @@
-$signal = File.read('day_6.txt').split("")
+$signal = File.read('day_06.txt').split("")
 
 def first_no_duplicates_index(unique_characters_needed)
   stream_index = $signal.each_cons(unique_characters_needed).with_index do |characters, i|
