@@ -1,4 +1,4 @@
-input = File.read('day_2.txt')
+input = File.read('day_02.txt')
 
 scores = { rock: 1, paper: 2, scissors: 3 }
 result_scores = { lose: 0, draw: 3, win: 6 }
