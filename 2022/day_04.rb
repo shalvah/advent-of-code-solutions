@@ -1,4 +1,4 @@
-input = File.read('day_4.txt')
+input = File.read('day_04.txt')
 
 assignments = input.each_line.map do |line|
   line.split(",").map { |pair| pair.split("-").map(&:to_i) }
