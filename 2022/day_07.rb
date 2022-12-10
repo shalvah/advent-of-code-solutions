@@ -1,4 +1,4 @@
-input = File.read('day_7.txt')
+input = File.read('day_07.txt')
 
 commands_and_outputs = input.each_line.chunk_while { |line1, line2| !line2.start_with?('$') }
   .map do |lines|
